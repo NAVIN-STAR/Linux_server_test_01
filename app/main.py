@@ -12,13 +12,15 @@ load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '..', '.env'))
 
 Base.metadata.create_all(bind=engine)
 APP_NAME = os.getenv("APP_NAME")
+APP_ENV = os.getenv("APP_ENV")
 app=FastAPI(root_path="/test01")
 app.include_router(coffee_router)
 app.include_router(auth_router)
 @app.get("/")
 async def root():
     return {
-        "app_name": APP_NAME
+        "app_name": APP_NAME,
+        "environment": APP_ENV
     }
 
 
