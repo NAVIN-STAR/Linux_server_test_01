@@ -8,7 +8,7 @@ from .routes.auth_routes import router as auth_router
 
 Base.metadata.create_all(bind=engine)
 
-app=FastAPI()
+app=FastAPI(root_path="/test01")
 app.include_router(coffee_router)
 app.include_router(auth_router)
 
