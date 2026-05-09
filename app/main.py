@@ -7,7 +7,8 @@ from .routes.auth_routes import router as auth_router
 from dotenv import load_dotenv
 import os
 
-load_dotenv()
+# Load .env from the project root
+load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '..', '.env'))
 
 Base.metadata.create_all(bind=engine)
 APP_NAME = os.getenv("APP_NAME")

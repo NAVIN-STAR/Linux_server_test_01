@@ -8,10 +8,6 @@ from ..auth_dependencies import get_current_user
 
 router=APIRouter()
 
-@router.get('/')
-def Welcome():
-    return {'message':"welcome"}
-
 #Insertion routes
 @router.post('/coffees/',response_model=List[schemas.ReadCoffee])
 def Create_Coffee(coffees:List[schemas.CoffeeCreate],db:Session=Depends(get_db)):
