@@ -10,14 +10,38 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Deploy to Linux Server
-        uses: appleboy/ssh-action@master
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
+      - name: Install cloudflared
+        run: |
+          wget https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64
+          chmod +x cloudflared-linux-amd64
+          sudo mv cloudflared-linux-amd64 /usr/local/bin/cloudflared
 
-          script: |
+      - name: Setup SSH Key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+
+      - name: Configure SSH
+        run: |
+          cat > ~/.ssh/config <<EOF
+          Host ssh.nabinlabs.in
+            User ${{ secrets.SERVER_USER }}
+            IdentityFile ~/.ssh/id_ed25519
+            ProxyCommand cloudflared access ssh --hostname %h
+          EOF
+
+      - name: Set Cloudflare Service Token
+        run: |
+          echo "CF_ACCESS_CLIENT_ID=${{ secrets.CF_ACCESS_CLIENT_ID }}" >> $GITHUB_ENV
+          echo "CF_ACCESS_CLIENT_SECRET=${{ secrets.CF_ACCESS_CLIENT_SECRET }}" >> $GITHUB_ENV
+
+      - name: Deploy Application
+        run: |
+          ssh -o StrictHostKeyChecking=no ssh.nabinlabs.in << 'EOF'
             cd /opt/apps/Linux_server_test_01
             ./deploy.sh
+          EOF
