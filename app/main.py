@@ -21,7 +21,7 @@ async def root():
     return {
         "app_name": APP_NAME,
         "environment": APP_ENV,
-        "message": "Welcome to the Coffee API! CI/CD. Checking the CI/CD pipeline with FastAPI and GitHub Actions."
+        "message": "Welcome to the Coffee API! CI/CD. Checking the CI/CD pipeline with FastAPI and GitHub Actions v2"
     }
 
 
